@@ -38,4 +38,4 @@ aread:
 	acroread ${filename}.pdf
 
 clean:
-	rm -f *.{ps, pf, log, aux, out, dvi, bbl, blg, DS_Store}
+	rm -f ${filename}.ps ${filename}.pdf ${filename}.log ${filename}.aux ${filename}.out ${filename}.dvi ${filename}.bbl ${filename}.blg
