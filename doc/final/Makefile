@@ -23,7 +23,7 @@ dvi:
 	latex ${filename}
 	latex ${filename}
 
-git:
+git: clean
 	git add --all .
 	git commit -m "Makefile Commit"
 	git push origin master
@@ -35,4 +35,4 @@ aread:
 	acroread ${filename}.pdf
 
 clean:
-	rm -f ${filename}.{ps,pdf,log,aux,out,dvi,bbl,blg}
+	rm -f *.{ps, pf, log, aux, out, dvi, bbl, blg}
