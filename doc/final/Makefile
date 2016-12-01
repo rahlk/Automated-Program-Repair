@@ -1,8 +1,11 @@
 
-filename=manuscript.tex
+filename=manuscript
 
 pdf: ps
 	ps2pdf ${filename}.ps
+
+build: pdf
+	xdg-open ${filename}.pdf &
 
 pdf-print: ps
 	ps2pdf -dColorConversionStrategy=/LeaveColorUnchanged -dPDFSETTINGS=/printer ${filename}.ps
@@ -18,10 +21,10 @@ ps:	dvi
 	dvips -t letter ${filename}.dvi
 
 dvi:
-	latex ${filename}
+	latex ${filename}.tex
 	bibtex ${filename}||true
-	latex ${filename}
-	latex ${filename}
+	latex ${filename}.tex
+	latex ${filename}.tex
 
 git: clean
 	git add --all .

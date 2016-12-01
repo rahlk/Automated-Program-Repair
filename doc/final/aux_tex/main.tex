@@ -1,129 +1,44 @@
-\documentclass[]{sig-alternate}
-%\usepackage{stfloats}
-\usepackage{tikz}
-\def\firstcircle{(90:1.75cm) circle (2.5cm)}
-\def\secondcircle{(210:1.75cm) circle (2.5cm)}
-\def\thirdcircle{(330:1.75cm) circle (2.5cm)}
-
-\usepackage[framed]{ntheorem}
-\usepackage{framed}
-\usepackage{tikz}
-\usetikzlibrary{shadows}
-%\newtheorem{Lesson}{Lesson}
-\theoremclass{Lesson}
-\theoremstyle{break}
-
-% inner sep=10pt,
-\tikzstyle{thmbox} = [rectangle, rounded corners, draw=black,
-fill=Gray!20,  drop shadow={fill=black, opacity=1}]
-\newcommand\thmbox[1]{%
-	\noindent\begin{tikzpicture}%
-	\node [thmbox] (box){%
-		\begin{minipage}{.94\textwidth}%
-		\vspace{-3mm}#1\vspace{-3mm}%
-		\end{minipage}%
-	};%
-	\end{tikzpicture}}
-
-\let\theoremframecommand\thmbox
-\newshadedtheorem{lesson}{Research answer}
-
-
-\usepackage{booktabs}
-\usepackage{comment}
-\usepackage{cite}
-\usepackage{framed,graphicx,xcolor}
-\usepackage{multirow}
-\usepackage{rotating}
-%\usepackage{stfloats}
-\usepackage[shortlabels]{enumitem}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{url}
-\usepackage{balance}
+\documentclass[9pt, compsoc, journal]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {./_figures/} }
+\usepackage{multicol}
+\bstctlcite{IEEEexample:BSTcontrol}
 \usepackage{bigstrut}
-\newcommand{\bi}{\begin{itemize}}
-	\newcommand{\ei}{\end{itemize}}
-\newcommand{\be}{\begin{enumerate}}
-	\newcommand{\ee}{\end{enumerate}}
-\newcommand{\tion}[1]{\textsection\ref{sect:#1}}
-\newcommand{\tab}[1]{Figure~\ref{fig:#1}}
-\newcommand{\eq}[1]{Equation~\ref{eq:#1}}
-%\setlist{nolistsep,leftmargin=5mm}
-%\usepackage[pdftex]{graphicx}
-% \usepackage{program}
-\newcommand{\Sample}{{\bf SAMPLE}}
-\newcommand{\PEEKING}{{\bf PEEKING2}}
-%\usepackage[table]{xcolor}
-\definecolor{darkgreen}{rgb}{0,0.3,0}
-\definecolor{Gray}{rgb}{0.88,1,1}
-\definecolor{Gray}{gray}{0.85}
-\definecolor{Blue}{RGB}{0,29,193}
-\usepackage{colortbl}
-\usepackage{picture}
-\usepackage{url}
-\usepackage{hyphenat}
-% \usepackage{hyperref}
-%\usepackage{listings}
-\DeclareMathOperator*{\argmin}{arg\,min}
-\DeclareMathOperator*{\argmax}{arg\,max}
-\definecolor{lightgray}{gray}{0.8}
-\definecolor{darkgray}{gray}{0.6}
-\definecolor{Gray}{gray}{0.95}
-\definecolor{LightGray}{gray}{0.975}
-
-\definecolor{Code}{rgb}{0,0,0}
-\definecolor{Decorators}{rgb}{0.5,0.5,0.5}
-\definecolor{Numbers}{rgb}{0.5,0,0}
-\definecolor{MatchingBrackets}{rgb}{0.25,0.5,0.5}
-\definecolor{Keywords}{rgb}{0,0,1}
-\definecolor{self}{rgb}{0,0,0}
-\definecolor{Strings}{rgb}{0,0.63,0}
-\definecolor{Comments}{rgb}{0,0.63,1}
-\definecolor{Comments}{rgb}{0.5,0.5,0.5}
-\definecolor{Backquotes}{rgb}{0,0,0}
-\definecolor{Classname}{rgb}{0,0,0}
-\definecolor{FunctionName}{rgb}{0,0,0}
-\definecolor{Operators}{rgb}{0,0,0}
-\definecolor{Background}{rgb}{1,1,1}
-\definecolor{lavenderpink}{rgb}{0.98, 0.68, 0.82}
-\definecolor{celadon}{rgb}{0.67, 0.88, 0.69}
-\newcommand{\G}{\cellcolor{green}}
-\newcommand{\Y}{\cellcolor{yellow}}
-
-\newcommand{\quart}[4]{\begin{picture}(80,4)%1
-	{\color{black}\put(#3,2){\circle*{4}}\put(#1,2){\line(1,0){#2}}}\end{picture}}
-\usepackage{url}
-
-\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45}
-\newenvironment{changed}{\par\color{MyDarkBlue}}{\par}
-%\newenvironment{changed}{\par}{\par}
-
-\newcommand{\ADD}[1]{\textcolor{MyDarkBlue}{{\bf #1}}}
-\usepackage{times}
-% \pagenumbering{arabic}
-\usepackage[splitrule]{footmisc} %% The splitrule option draws a full width 
-%%rule above the continued part of the footnote as a visual cue to readers.
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{tabulary}
+\usepackage{booktabs}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{bookman}
 \usepackage{balance}
-% \usepackage{flushend}
-\clubpenalty = 10000
-\widowpenalty = 10000
-\displaywidowpenalty = 10000
-
+\usepackage{flushend}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{hyperref}
+\hypersetup{colorlinks = False}
+\usepackage[english]{babel}
+\usepackage{blindtext}
+\usepackage{times}
+\usepackage{cite}
+\hypersetup{colorlinks,breaklinks,
+            urlcolor=[rgb]{0,0,0},
+            citecolor=[rgb]{0,0,0},
+            linkcolor=[rgb]{0,0,0}}
+\usepackage{fullpage}
+\linespread{1}
+\usepackage[table]{xcolor}
+\linespread{0.99}
 
 \begin{document}
   
-     \definecolor{shadecolor}{gray}{0.9}
-     \conferenceinfo{CSC791:}{Automated Program Repair}
-     \title{Too Much Automation? The Bellwether Effect and Its Implications for Transfer Learning}
-     \numberofauthors{1}
-     \author{
-     	\alignauthor
-     	Rahul~Krishna \hspace{40pt} Anwesha~Das\\
-     	\affaddr{Computer Science, North Carolina State University, USA}\\
-     	{\{rkrish11, adas4\}@ncsu.edu}}
-     \maketitle
-     
+  \title{A Case for Multi-Objective Search in Automated Patch Generation}
+  \author{Rahul Krishna, 
+  \IEEEauthorblockA{\normalsize {\textit{Department of Computer Science}\\
+    North Carolina State University, Email: 
+    \href{mailto:rkrish11@ncsu.edu}{{rkrish11@ncsu.edu}}}}}
+
+\maketitle
 \section{Motivation}
 
 Automated Patch generation has garnered a lot of attention in the past decade. Specifically, tools like GenProg have seen tremendous success. In fact, GenProg is now used as a baseline to compare other new techniques. Albeit popular, there is a general lack of agreement on the need for complex tools like GenProg to generate effective patches. While some researchers~\cite{leGoues12} opine that GenProg is quite effective in generating patches, given the existence of test cases, others \cite{qi2014, kim2013, arcuri2011} disagree. They say that it is quite unclear if the the efficacy of GenProg is merely due to its ``mutate'' operator or due to genetic programming.
@@ -141,7 +56,7 @@ Although it makes theoretical sense to view patch generation as containing multi
 
 \subsubsection*{RQ2: If yes, what is the best multiobjective search to generate patches automatically?}
 \label{rq2}
-If the answer to RQ1 is affirmative. This question aims to explore various multiobjective optimizers to identify the best algorithm. Specifically, this project will compare three standard SBSE techniques: NSGAII, MOEAD, Genetic Programming, using Random Search as a baseline. In addition to this, the usefulness of a promising new algorithm called SWAY\footnote{This algorithm is in current development by our research group}~\cite{chen2016sampling, nair2016accidental} will be also be investigated. 
+If the answer to RQ1 is affirmative. This question aims to explore various multiobjective optimizers to identify the best algorithm. Specifically, this project will compare three standard SBSE techniques: NSGAII, MOEAD, Genetic Programming, using Random Search as a baseline. In addition to this, the usefulness of a promising new algorithm called SWAY\footnote{This algorithm is in current development by our research group (see \href{http://ai4se.net}{{http://ai4se.net}}).}~\cite{chen2016sampling, nair2016accidental} will be also be investigated. 
 
 \section{An Overview of Patch Generation}
 
@@ -161,7 +76,7 @@ Generally, when a bug is reported, an automated program repair scheme undertakes
 
 The above procedure can be iterated over and over again until some valid patch is found. Any patch passing all these test cases is considered valid. 
 
-\input{aux_tex/measures.tex}
+\input{measures.tex}
 \section{A (very) Brief Overview of Multiobjective Search}
 
 A search is the task of finding one or more solutions which satisfy one or more specified objectives. While a single-objective optimization involves a single objective function and a single solutions, a multiobjective optimization considers several objectives simultaneously. In reference to the current problem we have three competing objectives, all of which need to be maximized: (1) Number of passing test cases; (2) The repair effectiveness; and (3) The repair efficiency 
@@ -172,7 +87,8 @@ Multiobjective problems are usually complex, NP-Hard, and resource intensive. Al
 
 \section{Evaluation}
 
-%\input{aux_tex/datasets.tex}
+\input{datasets.tex}
+\input{timeline.tex}
 
 \subsection{Metrics}
 Figure \ref{fig:measure} highlights some of the preliminary performance evaluation measures we use to evaluate the algorithms. Please note that this will be expanded in future to accommodate other measures.
@@ -202,7 +118,7 @@ if $m,n$ are significantly different. If so, Scott-Knott then recurses on each d
 
 \section{Proposed Timeline}
 
-Figure \ref{time} highlights the proposed timeline for the tasks undertaken in the project. Please note again that this subject to change, please see https://github.com/ai-se/spatch/milestones for the latest milestone progress.\\
+Figure \ref{time} highlights the proposed timeline for the tasks undertaken in the project. Please note again that this subject to change, please see \href{https://github.com/ai-se/spatch/milestones}{{https://github.com/ai-se/spatch/milestones}} for the latest milestone progress.\\
 \pagebreak
 \bibliographystyle{unsrt}
 \bibliography{References}
