@@ -102,7 +102,7 @@ fill=Gray!20,  drop shadow={fill=black, opacity=1}]
 \newcommand{\ADD}[1]{\textcolor{MyDarkBlue}{{\bf #1}}}
 \usepackage{times}
 % \pagenumbering{arabic}
-\usepackage[splitrule]{footmisc} %% The splitrule option draws a full width 
+\usepackage[splitrule]{footmisc} %% The splitrule option draws a full width
 %%rule above the continued part of the footnote as a visual cue to readers.
 \usepackage{balance}
 % \usepackage{flushend}
@@ -112,7 +112,7 @@ fill=Gray!20,  drop shadow={fill=black, opacity=1}]
 
 
 \begin{document}
-  
+
      \definecolor{shadecolor}{gray}{0.9}
      \conferenceinfo{CSC791:}{Automated Program Repair}
      \title{Too Much Automation? The Bellwether Effect and Its Implications for Transfer Learning}
@@ -123,12 +123,21 @@ fill=Gray!20,  drop shadow={fill=black, opacity=1}]
      	\affaddr{Computer Science, North Carolina State University, USA}\\
      	{\{rkrish11, adas4\}@ncsu.edu}}
      \maketitle
-     
-\section{Motivation}
 
-Automated Patch generation has garnered a lot of attention in the past decade. Specifically, tools like GenProg have seen tremendous success. In fact, GenProg is now used as a baseline to compare other new techniques. Albeit popular, there is a general lack of agreement on the need for complex tools like GenProg to generate effective patches. While some researchers~\cite{leGoues12} opine that GenProg is quite effective in generating patches, given the existence of test cases, others \cite{qi2014, kim2013, arcuri2011} disagree. They say that it is quite unclear if the the efficacy of GenProg is merely due to its ``mutate'' operator or due to genetic programming.
+		 \begin{abstract}
 
-This issue was examined by Qi et at.~\cite{qi2014}. With their tool RSRepair (\underline{\textit{R}}andom-\underline{\textit{S}}earch \underline{\textit{Repair}}), they demonstrated the benefit of random search over GenProg. 
+			 Automated Patch generation has garnered a lot of attention in the past decade. It has long been a elusive goal in software engineering. Automation has been a key research area and yet debugging/patch generation remains a largely manual process. One success story in this endeavor is \textit{GenProg} . In fact, GenProg, which is widely accepted as a promising tool by the research community, is now used as a baseline to compare other new techniques. Albeit popular, there is a general lack of consensus on the need for such complex tools to generate effective patches. While some researchers~\cite{leGoues12} opine that GenProg is quite effective in generating patches, given the existence of test cases, others \cite{qi2014, kim2013, arcuri2011} disagree. They say that it is quite unclear if the the efficacy of GenProg is merely due to its ``mutate'' operator or due to genetic programming.\\
+
+			 \noindent{\bf Categories/Subject Descriptors:} D.2 [Software Engineering]; I.2
+        [Artificial Intelligence];
+
+		 \keywords{Defect Prediction; Data Mining; Transfer learning}
+		 \end{abstract}
+
+\section{Introduction}
+
+
+This issue was examined by Qi et at.~\cite{qi2014}. With their tool RSRepair (\underline{\textit{R}}andom-\underline{\textit{S}}earch \underline{\textit{Repair}}), they demonstrated the benefit of random search over GenProg.
 
 It is my hypothesis that the lack of efficiency of GenProg in this area is not due to the failure of Genetic Algorithms (or any evolutionary computation scheme for that matter), but due to incorrect and perhaps even incomplete modeling of the search space.
 
@@ -141,7 +150,7 @@ Although it makes theoretical sense to view patch generation as containing multi
 
 \subsubsection*{RQ2: If yes, what is the best multiobjective search to generate patches automatically?}
 \label{rq2}
-If the answer to RQ1 is affirmative. This question aims to explore various multiobjective optimizers to identify the best algorithm. Specifically, this project will compare three standard SBSE techniques: NSGAII, MOEAD, Genetic Programming, using Random Search as a baseline. In addition to this, the usefulness of a promising new algorithm called SWAY\footnote{This algorithm is in current development by our research group}~\cite{chen2016sampling, nair2016accidental} will be also be investigated. 
+If the answer to RQ1 is affirmative. This question aims to explore various multiobjective optimizers to identify the best algorithm. Specifically, this project will compare three standard SBSE techniques: NSGAII, MOEAD, Genetic Programming, using Random Search as a baseline. In addition to this, the usefulness of a promising new algorithm called SWAY\footnote{This algorithm is in current development by our research group}~\cite{chen2016sampling, nair2016accidental} will be also be investigated.
 
 \section{An Overview of Patch Generation}
 
@@ -150,25 +159,25 @@ Generally, when a bug is reported, an automated program repair scheme undertakes
 \begin{enumerate}
     \item \textit{Fault localization:}
     These techniques are used to identify suspicious faulty code snippet that may a have caused the bug.
-    
+
     \item \textit{Patch Generation:}
-    Once faulty code snippet has been located, many candidate patches can be generated through the modifications to that code snippet, according to specific repair rules based on either evolutionary computation or code-based contracts. 
-    
+    Once faulty code snippet has been located, many candidate patches can be generated through the modifications to that code snippet, according to specific repair rules based on either evolutionary computation or code-based contracts.
+
     \item \textit{Patch Validation:}
     When a candidate patch has been produced, regression testing, inclusive of negative test cases (reproducing the fault) and positive test cases (characterizing the normal behaviors), is commonly used to validate the correctness of produced candidate patch.
 
 \end{enumerate}
 
-The above procedure can be iterated over and over again until some valid patch is found. Any patch passing all these test cases is considered valid. 
+The above procedure can be iterated over and over again until some valid patch is found. Any patch passing all these test cases is considered valid.
 
 \input{aux_tex/measures.tex}
 \section{A (very) Brief Overview of Multiobjective Search}
 
-A search is the task of finding one or more solutions which satisfy one or more specified objectives. While a single-objective optimization involves a single objective function and a single solutions, a multiobjective optimization considers several objectives simultaneously. In reference to the current problem we have three competing objectives, all of which need to be maximized: (1) Number of passing test cases; (2) The repair effectiveness; and (3) The repair efficiency 
+A search is the task of finding one or more solutions which satisfy one or more specified objectives. While a single-objective optimization involves a single objective function and a single solutions, a multiobjective optimization considers several objectives simultaneously. In reference to the current problem we have three competing objectives, all of which need to be maximized: (1) Number of passing test cases; (2) The repair effectiveness; and (3) The repair efficiency
 
 In such a case, a multiobjective optimizer generates a set of alternate solution with certain trade-offs. These are called \textit{Pareto Optimal Solutions}. The solutions, in our case, will be a set of valid patches that perform equally well when measured in terms of the three objectives.
 
-Multiobjective problems are usually complex, NP-Hard, and resource intensive. Although exact methods can be used, they consume prohibitively large amounts of time and memory. An alternative approach would be to make use of metaheuristic algorithms from RQ2. These approximate the Pareto frontier in a reasonable amount of time. 
+Multiobjective problems are usually complex, NP-Hard, and resource intensive. Although exact methods can be used, they consume prohibitively large amounts of time and memory. An alternative approach would be to make use of metaheuristic algorithms from RQ2. These approximate the Pareto frontier in a reasonable amount of time.
 
 \section{Evaluation}
 
@@ -184,10 +193,10 @@ Calculating these metrics are well studied~\cite{deb2002fast, goel2010study}. We
 The data set required for evaluating will be obtained from some recent work on GenProg~\cite{leGoues12}. My reading of the literature suggests that these dataset are the ``benchmarks'', used by several researchers~\cite{qi2014}. These are C programs with all the bugs reported reported in the historical versions as tabulated in Figure~\ref{fig:datasets}.
 
 \subsection{Tools}
-As for tools, it is worth noting that AST can be generated from C programs using a tool called CIL\footnote{https://sourceforge.net/projects/cil/}.  
+As for tools, it is worth noting that AST can be generated from C programs using a tool called CIL\footnote{https://sourceforge.net/projects/cil/}.
 
 \subsection{Analysis Plan}
-To provide a more comprehensive comparison, the optimizers will be ranked ranked statistically. To do this, I shall use the Scott-Knott procedure recommended by Mittas \& Angelis\cite{mittas13}. 
+To provide a more comprehensive comparison, the optimizers will be ranked ranked statistically. To do this, I shall use the Scott-Knott procedure recommended by Mittas \& Angelis\cite{mittas13}.
 
 This method sorts a list of $l$ treatments with $ls$ measurements by their median
 score. It then
