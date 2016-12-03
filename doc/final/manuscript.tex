@@ -1,10 +1,10 @@
-\documentclass[]{sig-alternate}
+\documentclass{sig-alternate}
 %\usepackage{stfloats}
 \usepackage{tikz}
 \def\firstcircle{(90:1.75cm) circle (2.5cm)}
 \def\secondcircle{(210:1.75cm) circle (2.5cm)}
 \def\thirdcircle{(330:1.75cm) circle (2.5cm)}
-
+\usepackage{graphicx}
 \usepackage[framed]{ntheorem}
 \usepackage{framed}
 \usepackage{tikz}
@@ -46,8 +46,8 @@ fill=Gray!20,  drop shadow={fill=black, opacity=1}]
 	\newcommand{\ei}{\end{itemize}}
 \newcommand{\be}{\begin{enumerate}}
 	\newcommand{\ee}{\end{enumerate}}
-\newcommand{\tion}[1]{\textsection\ref{sect:#1}}
-\newcommand{\tab}[1]{Figure~\ref{fig:#1}}
+\newcommand{\tion}[1]{\textsection\ref{#1}}
+\newcommand{\fig}[1]{Figure~\ref{fig:#1}}
 \newcommand{\eq}[1]{Equation~\ref{eq:#1}}
 %\setlist{nolistsep,leftmargin=5mm}
 %\usepackage[pdftex]{graphicx}
@@ -90,7 +90,9 @@ fill=Gray!20,  drop shadow={fill=black, opacity=1}]
 \definecolor{celadon}{rgb}{0.67, 0.88, 0.69}
 \newcommand{\G}{\cellcolor{green}}
 \newcommand{\Y}{\cellcolor{yellow}}
-
+%\usepackage{parskip}
+\setlength{\parskip}{1ex} % 1ex plus 0.5ex minus 0.2ex}
+%\setlength{\parindent}{0pt}
 \newcommand{\quart}[4]{\begin{picture}(80,4)%1
 	{\color{black}\put(#3,2){\circle*{4}}\put(#1,2){\line(1,0){#2}}}\end{picture}}
 \usepackage{url}
@@ -109,110 +111,204 @@ fill=Gray!20,  drop shadow={fill=black, opacity=1}]
 \clubpenalty = 10000
 \widowpenalty = 10000
 \displaywidowpenalty = 10000
-
+\newfont{\mycrnotice}{ptmr8t at 7pt}
+\newfont{\myconfname}{ptmri8t at 7pt}
+\let\crnotice\mycrnotice%
+\let\confname\myconfname%
 
 \begin{document}
 
      \definecolor{shadecolor}{gray}{0.9}
-     \conferenceinfo{CSC791:}{Automated Program Repair}
-     \title{Too Much Automation? The Bellwether Effect and Its Implications for Transfer Learning}
+     
+     \title{A Case For Multi-Objective Search In Automated Program Repair}
      \numberofauthors{1}
      \author{
      	\alignauthor
      	Rahul~Krishna \hspace{40pt} Anwesha~Das\\
      	\affaddr{Computer Science, North Carolina State University, USA}\\
      	{\{rkrish11, adas4\}@ncsu.edu}}
+      \permission{Permission to make digital or hard copies of all or part of
+        this work for personal or classroom use is granted without fee provided 
+        that copies are not made or distributed for profit or commercial advantage 
+        and that copies bear this notice and the full citation on the first page. 
+        Copyrights for components of this work owned by others than the author(s) 
+        must be honored. Abstracting with credit is permitted. To copy otherwise, 
+        or republish, to post on servers or to redistribute to lists, requires 
+        prior specific permission and/or a fee. Request permissions from 
+        Permissions@acm.org.}
+      \conferenceinfo{CSC791:}{Automated Program Repair\\
+        {\mycrnotice{Copyright is held by the owner/author(s). Publication rights 
+            licensed to ACM.}}}
+      \copyrightetc{ACM \the\acmcopyr}
+      \crdata{123-4-5679-10/11/12\ ...\$00.00.\\
+        http://dx.doi.org/}
      \maketitle
 
 		 \begin{abstract}
 
-			 Automated Patch generation has garnered a lot of attention in the past decade. It has long been a elusive goal in software engineering. Automation has been a key research area and yet debugging/patch generation remains a largely manual process. One success story in this endeavor is \textit{GenProg} . In fact, GenProg, which is widely accepted as a promising tool by the research community, is now used as a baseline to compare other new techniques. Albeit popular, there is a general lack of consensus on the need for such complex tools to generate effective patches. While some researchers~\cite{leGoues12} opine that GenProg is quite effective in generating patches, given the existence of test cases, others \cite{qi2014, kim2013, arcuri2011} disagree. They say that it is quite unclear if the the efficacy of GenProg is merely due to its ``mutate'' operator or due to genetic programming.\\
-
+			 Automated Patch generation has garnered a lot of attention in the past decade. It has long been a elusive goal in software engineering. Automation has been a key research area and yet debugging/patch generation remains a largely manual process. One success story in this endeavor is \textit{GenProg}. In fact, GenProg, widely accepted as a promising tool by the research community, is now used as a baseline to compare other new techniques. Albeit popular, there is a general lack of consensus on the need for such complex tools to generate effective patches. While some researchers opine that GenProg is quite effective in generating patches, given the existence of test cases, others disagree. They say that it is quite unclear if the efficacy of GenProg is merely due to its ``mutate'' operator or due to genetic programming. In this report we set out to these hypothesis. We conjectured that GenProg would be just as efficient if the core search strategy i.e., genetic programming, is replaced by other variants of genetic algorithms. In specific, we used NSGA-II, a very popular variant of genetic algorithm that has been extensively used and studied in search based software engineering. In addition to this, we also hypothesized that it is possible to generate better patches by converting genetic programming from it's current single objective form to a multiobjective search. Our findings contradict researchers claims that the success of genprog is the ``mutate'' operation. We show that genetic programming plays a critical role in the success of GenProg. Additionally, we show that by increasing the number of objectives used in fitness evaluation form one to two, GenProg succeeds in producing valid patches while also performing a more expansive search.\\
+%       \newpage
 			 \noindent{\bf Categories/Subject Descriptors:} D.2 [Software Engineering]; I.2
         [Artificial Intelligence];
-
-		 \keywords{Defect Prediction; Data Mining; Transfer learning}
-		 \end{abstract}
-
+	     \keywords{Defect Prediction; Data Mining; Transfer learning}
+     \end{abstract}  		
 \section{Introduction}
 
 
-This issue was examined by Qi et at.~\cite{qi2014}. With their tool RSRepair (\underline{\textit{R}}andom-\underline{\textit{S}}earch \underline{\textit{Repair}}), they demonstrated the benefit of random search over GenProg.
+Maintaining released software is a rather difficult, time- consuming, and a manual
+process. In their book, Seacord et al.~\cite{seacord:2003:MLS:599767} place software maintenance, traditionally defined as any modification made on a system after its delivery, at 90\% of the total cost of a typical software project. The literature on software maintenance is expansive. They all note that modifying existing code consumes a significant amount of maintenance effort. Anvik et al.~\cite{anvik2005coping} find that the number of outstanding software defects usually outnumbers the available resources to address them. Similarly, Liblit et al.~\cite{liblit2003bug} remark that several software systems are shipped to known and unknown bugs because of the lack of resources. 
 
-It is my hypothesis that the lack of efficiency of GenProg in this area is not due to the failure of Genetic Algorithms (or any evolutionary computation scheme for that matter), but due to incorrect and perhaps even incomplete modeling of the search space.
 
-As a motivating example consider Genetic Programming. The algorithm works by trying to maximize the ``fitness'' score. In this case, the number of passing test cases given a patch. RSRepair, on the other hand, considers either repair effectiveness (as measured by the number patch trials required) or repair efficiency (measured by the number of test case executions). It not hard to see that each of these objectives namely, the number of passing test cases, the repair effectiveness, and the repair efficiency, are all important. Perhaps some are more important than others, but they all play a crucial role nonetheless.
+To alleviate the load on developers working on these issues automated patch generation has been proposed. Over the past decade research on this front has gained a lot of traction in the software engineering community. Specifically, tools that leverage evolution computation strategies, like GenProg~\cite{leGoues12}, have seen tremendous amounts of success. 
 
-Therefore, I conjecture that the research in the area of automated patch generation will be best guided by modeling the domain as a multiobjective search problem with the aforementioned objectives. This, in my opinion, will allow us to leverage the wealth of research in Search Based Software Engineering (referred to henceforth as \textit{SBSE}). To this end, this project asks the following two research questions:
+Although widely accepted as an excellent tool, researchers have questioned the reported lack of efficiency these tools. Researchers also generally disagree on if evolutionary computation is a good candidate for patch generation. For instance, several researchers~\cite{qi2014, kim2013, arcuri2011} say that it is quite unclear if the the efficacy (or lack thereof) of GenProg is due to its ``mutate'' operator or due to genetic programming. This issue was further examined by Qi et at.~\cite{qi2014}. With their tool RSRepair (\underline{\textit{R}}andom-\underline{\textit{S}}earch \underline{\textit{Repair}}), they demonstrated the benefit of random search over GenProg.
 
-\subsubsection*{RQ1: Can automated patch generation be modeled as a multiobjective search problem?}
+A motivation for this study was our hypothesis that the lack of efficiency of GenProg, in some cases, in this area is not due to the failure of Genetic Algorithms (or any evolutionary computation scheme for that matter), but due to incorrect and perhaps even incomplete modeling of the search space. We therefore propose the use of multiobjective search in automated program repair which extends the original single objective GenProg by adding additional objectives to satisfy the fitness function. Additionally, to verify if the success of GenProg is indeed due to genetic programming and not mutation/crossover operations, we study to performance of NGSAII~\cite{nsgaii}. It is also worth noting that, to be best of our knowledge, this is the first attempt to study multiobjective patch generation in automated program repair. 
+
+With this premise, the rest of this paper explores, in greater detail, the impact of multi-objective evolutionary algorithms in automated program repair. The report is structured as follows: \tion{rq} highlights the research questions that will be answered; \tion{prelim} presents a brief summary of the domain and multi-objective search; \tion{eval}
+presents our evaluation strategy; \tion{results} presents the experimental result; this is followed by \tion{discuss} that discusses our findings; and finally, \tion{conclusions} presents the conclusion and guides readers to potential future work.
+ 
+\section{Research Questions}
+\label{rq}
+We conjecture that one way to further the research in the area of automated patch generation may be by modeling the domain as a multiobjective search problem. Consider genetic programming --- the algorithm works by trying to maximize the ``fitness'' score. In this case, the number of passing test cases given a patch. Algorithms like RSRepair, on the other hand, considers either repair effectiveness (as measured by the number patch trials required) or repair efficiency (measured by the number of test case executions). It not hard to see that each of these objectives namely, the number of passing test cases, the repair effectiveness, and the repair efficiency, are all important. Perhaps some are more important than others, but they all play a crucial role nonetheless. 
+
+Converting to multi-objective fitness evaluation, will allow us to leverage the wealth of research in Search Based Software Engineering (referred to henceforth as \textit{SBSE}). To this end, in our study we ask the following research questions:
+
+\subsection*{RQ1: Can automated patch generation be modeled as a multiobjective search problem?}
+\label{rq1}
 Although it makes theoretical sense to view patch generation as containing multiple objectives, this question asks if it is practical to model it as such.
 
-\subsubsection*{RQ2: If yes, what is the best multiobjective search to generate patches automatically?}
+\subsection*{RQ2: If yes, how does single objective GP compare to multiobjective GP?}
 \label{rq2}
-If the answer to RQ1 is affirmative. This question aims to explore various multiobjective optimizers to identify the best algorithm. Specifically, this project will compare three standard SBSE techniques: NSGAII, MOEAD, Genetic Programming, using Random Search as a baseline. In addition to this, the usefulness of a promising new algorithm called SWAY\footnote{This algorithm is in current development by our research group}~\cite{chen2016sampling, nair2016accidental} will be also be investigated.
+If the answer to RQ1 is affirmative. This question aims to extend a simple single objective genetic programming algorithm to multiobjective search. Then, we reflect on the patches generated by each algorithm to study their quality.
 
-\section{An Overview of Patch Generation}
+\subsection*{RQ3: Can we replace genetic programming by some other genetic algorithm?}
+\label{rq3}
+Assuming that we can answer RQ2, this question would be a natural extension to that. Here we ask what would happen if we used a different multiobjective optimizer in place of genetic programing. With this, we seek to validate (or perhaps deprecate) certain claims of studies by Qi et al.~\cite{qi2014}. They consider that the success of GenProg is due to the ``mutate'' operation of evolutionary algorithms and not genetic programming. 
 
-Generally, when a bug is reported, an automated program repair scheme undertakes the following three steps:
+\input{figs/gp.tex}
 
-\begin{enumerate}
-    \item \textit{Fault localization:}
-    These techniques are used to identify suspicious faulty code snippet that may a have caused the bug.
+We believe this to be untrue and to verify our opinion we replace GP with NSGAII~\cite{nsgaii}. NSGAII is a incredibly popular variant of GA (18000+ citations). NSGAII consists of a novel sort algorithm that enables it identify better solutions and to converge at these solution much faster.  
 
-    \item \textit{Patch Generation:}
-    Once faulty code snippet has been located, many candidate patches can be generated through the modifications to that code snippet, according to specific repair rules based on either evolutionary computation or code-based contracts.
+\section{Methods and Materials}
+\label{prelim}
+Generally, when a bug is reported, an automated program repair tool based on a evolutionary algorithm undertakes a set of standard steps as endorsed by LeGoues et al~\cite{Goues}\footnote{Unfortunately, space limitations do not permit a detailed explanation of each of these steps, so this will brief.}.   
 
-    \item \textit{Patch Validation:}
-    When a candidate patch has been produced, regression testing, inclusive of negative test cases (reproducing the fault) and positive test cases (characterizing the normal behaviors), is commonly used to validate the correctness of produced candidate patch.
+\input{figs/nsgaii.tex}
+\subsection{Search Strategy}
 
-\end{enumerate}
+GenProg proposes that use of an iterated stochastic search technique, to search for program repairs. Indeed, the search space comprising of possible repairs is extremely large, and any search algorithm would be required employ these four strategies to be a practical option: (1) generate coarse-grained, statement-level patches to reduce search space size; (2) implement fault localization to focus edit locations; (3) access existing code to provide the seed of new repairs; and (4) use a fitness approximation to cull bad patches.
 
-The above procedure can be iterated over and over again until some valid patch is found. Any patch passing all these test cases is considered valid.
+In this paper, we discuss to such search strategies: GP and NSGA-II. Both of these are in fact variants of standard genetic algorithm. Motivated by studies on genetics, GA appeared in early 60s as a potential meta-heuristic search strategy. The rest of this subsection provides a very brief introduction to multiobjective search and the two algorithms\footnote{Interested readers are encouraged to read~\cite{clever} for a more in-depth discussion of these and other similar algorithms}.
 
-\input{aux_tex/measures.tex}
-\section{A (very) Brief Overview of Multiobjective Search}
 
-A search is the task of finding one or more solutions which satisfy one or more specified objectives. While a single-objective optimization involves a single objective function and a single solutions, a multiobjective optimization considers several objectives simultaneously. In reference to the current problem we have three competing objectives, all of which need to be maximized: (1) Number of passing test cases; (2) The repair effectiveness; and (3) The repair efficiency
+\subsubsection{An Overview of Multiobjective Search}
+\label{mos}
+A multiobjective search is the task of finding solutions which satisfy two or more specified objectives. While a single-objective optimization involves a single objective function and a single solution, a multiobjective optimization considers several objectives simultaneously. 
 
-In such a case, a multiobjective optimizer generates a set of alternate solution with certain trade-offs. These are called \textit{Pareto Optimal Solutions}. The solutions, in our case, will be a set of valid patches that perform equally well when measured in terms of the three objectives.
+In context of the current problem we have two potentially conflicting objectives: 
+\be
+\item Total number of failing test cases: needs to be minimized; and 
+\item Number of test case executions before the first failure: needs to be maximized.
+\ee
 
-Multiobjective problems are usually complex, NP-Hard, and resource intensive. Although exact methods can be used, they consume prohibitively large amounts of time and memory. An alternative approach would be to make use of metaheuristic algorithms from RQ2. These approximate the Pareto frontier in a reasonable amount of time.
+\input{figs/gp_ex.tex}
+
+\input{figs/results.tex}
+In such a case, a multiobjective optimizer generates a set of alternate solutions with certain trade-offs. These are called \textit{Pareto Optimal Solutions}. The solutions, in our case, will be a set of valid patches that perform equally well when measured in terms of the two objectives listed above.
+
+Multiobjective problems are usually complex, NP-Hard, and resource intensive. Although exact methods can be used, they consume prohibitively large amounts of time and memory. An alternative approach would be to make use of meta-heuristic algorithms from RQ3. These approximate the Pareto frontier in a reasonable amount of time.
+
+\subsubsection{Genetic Programming}
+
+The Genetic Programming algorithm is inspired by population genetics (including heredity and gene frequencies), and evolution at the population level, as well as the Mendelian understanding of the structure (such as chromosomes, genes, alleles) and mechanisms (such as crossover and mutation). 
+
+In the context of program repair, the objective of the Genetic Programming algorithm is to use induction to search potential patches. This is achieved by using evolutionary operators on candidate programs and their Abstract Syntax Trees to improve the adaptive fit between the population of candidate programs and an objective function. An assessment of a candidate solution involves the execution of given test cases counting the number of failures with a given patch.
+
+High-level pseudocode for GenProg's main GP loop is shown in \fig{gp_pseudo}; it closely resembles~\cite{Goues}. Fitness is measured as a weighted average of the positive (i.e., initially passing, encoding required functionality) and negative (i.e., initially failing, encoding a defect) test cases. The goal is to produce a candidate patch that causes the original program to pass all test cases. In this paper, each individual, or variant, is represented as a repair patch stored and operated as an AST.  
+
+\subsubsection{NSGA-II}
+
+The objective of NSGA-II algorithm is to improve the adaptive fit of a population of candidate solutions to a Pareto front (see section~\ref{mos} for definition) constrained by a set of objective functions. The algorithm uses an evolutionary process with surrogates for evolutionary operators including selection, genetic crossover, and genetic mutation. The population is sorted into a hierarchy of sub-populations based on the ordering of Pareto dominance. Similarity between members of each sub-group is evaluated on the Pareto front, and the resulting groups and similarity measures are used to promote a diverse front of ``non-dominated'' solutions.
+
+
+\fig{nsgaII} provides a pseudocode listing of the Non-dominated Sorting Genetic Algorithm II (NSGA-II) for minimizing a cost function. The \texttt{SortByRankAndDistance} function orders the population into a hierarchy of non-dominated Pareto fronts. The \texttt{CrowdingDistanceAssignment} calculates the average distance between members of each front on the front
+itself.
+
+\subsection{A Note on Patch Representation}
+\label{patch_rep}
+There are two fundamental differences between NSGA-II and GP. The first is of course, the nature of sort after each generation. NSGA-II uses a novel non-dominated sorting followed by an elite sampling to pick members that are retained in the population for the next iteration of the algorithm. GP on the other hand uses a simple \texttt{quicksort} followed by top-N sampling to pick members for the next iteration of the algorithm.
+
+A more important distinction lies in the patch representation used by both these algorithms. NSGA-II converts the code in flattened representation. In a ``flat representation'' every line/expression is considered independent of every other line/expression. Mutations/Crossovers can affect any line. This is quite dangerous for obvious reasons. 
+
+GP on the other hand takes a tree-based approach for code representation. It makes use of ASTs to represent the code. AST by nature respect code hierarchies and interdependencies. Thus, any mutation/crossover will not only affect a line, but will also affect the so-called children of that statement. A simple example is shown in ~\fig{gp_ex} for reference.
+
+
+\subsection{Fault Localization}
+After the search strategy is determined. An automated program repair scheme uses some form of fault localization to locate faults in a given code. GenProg\footnote{Note that when we say GenProg we refer to it as a scheme. All statements made about it apply to Genetic Programming and NSGA-II} focuses repair efforts on statements that are visited by the negative test cases, biased heavily towards those that are not also visited by positive test cases.
+ 
+\subsection{Patch Generation}
+Once faulty code snippet has been located, many candidate patches can be generated through the modifications to that code snippet, according to specific repair rules based on either evolutionary computation or code-based contracts. In the context of search, these would be solutions on the Pareto Frontier. Patches are represented as the source of insertion/replacement code pointed to on an AST (in the case of GP) or as line modifications to be performed (in case of NSGA-II). 
+
+\subsection{Patch Validation}
+When a candidate patch has been produced it is represented as a new AST (or new set of lines/expressions in the case of NSGA-II). The code is then modified to reflect these recommendations. This is followed by regression testing, inclusive of negative test cases (reproducing the fault) and positive test cases (characterizing the normal behaviors), is commonly used to validate the correctness of produced candidate patch. The above procedure can be iterated over and over again until some valid patch is found. Any patch passing all these test cases is considered valid. 
+
+The fitness of a patch is a quantitative measure which is obtained by counting the following two measures: (1) Number of test case failure for a patch; and (2) Number of successful evaluations before the first test case failure. 
+
+%\input{aux_tex/measures.tex}
 
 \section{Evaluation}
+\label{eval}
+\subsubsection{Number of fixes}
 
-%\input{aux_tex/datasets.tex}
+This measure looks at the total number of bug fixes offered by the program. A successful program repair tool would at least generate one patch. A powerful tool should patch everything.  
 
-\subsection{Metrics}
-Figure \ref{fig:measure} highlights some of the preliminary performance evaluation measures we use to evaluate the algorithms. Please note that this will be expanded in future to accommodate other measures.
+\subsubsection{Evaluation Time}
 
-\subsubsection{How to calculate them?}
-Calculating these metrics are well studied~\cite{deb2002fast, goel2010study}. We have an implementation in place that can readily give these metrics, given a set of ideal solutions (in this case, valid patches).
+As highlighted previously, multiobjective search algorithms are notorious for their impractically large run times. It is then important to measure how long a program takes to terminate. If the time taken is much larger than how much a human would take, it necessitates improving the algorithms or relaxing fitness criteria.
 
-\subsection{Datasets}
-The data set required for evaluating will be obtained from some recent work on GenProg~\cite{leGoues12}. My reading of the literature suggests that these dataset are the ``benchmarks'', used by several researchers~\cite{qi2014}. These are C programs with all the bugs reported reported in the historical versions as tabulated in Figure~\ref{fig:datasets}.
+\subsubsection{Patch variance}
 
-\subsection{Tools}
-As for tools, it is worth noting that AST can be generated from C programs using a tool called CIL\footnote{https://sourceforge.net/projects/cil/}.
+This measure is used to study the nature of patches generated by a search algorithm. It is entirely possible that a bug may be fixed in more that one way. Then, an method that can explore a much larger search space would be an enticing alternative to a narrow search scheme.  
+\input{figs/results2.tex}
+\section{Experimental Results}
+\label{results}
 
-\subsection{Analysis Plan}
-To provide a more comprehensive comparison, the optimizers will be ranked ranked statistically. To do this, I shall use the Scott-Knott procedure recommended by Mittas \& Angelis\cite{mittas13}.
+\subsection*{RQ1: Can automated patch generation be modeled as a multiobjective search problem?}
+To answer this question, we modeled GP as a two objective optimization and compared it with a single object GP that was available to us. The results we quite interesting, we found that a multiobjective GP fixed all the lines as the single objective GP. A sample \texttt{FaultFile} and \texttt{FixFile} are shown in Figure 6 and Figure 7. Note that in both the cases we obtained the exact same fixes in all the test programs. Thus, for parsimony's sake, we chose to report only one.
 
-This method sorts a list of $l$ treatments with $ls$ measurements by their median
-score. It then
-splits $l$ into sub-lists $m,n$ in order to maximize the expected value of
-differences  in the observed performances
-before and after divisions. E.g. for lists $l,m,n$ of size $ls,ms,ns$ where $l=m\cup n$:
-\[E(\Delta)=\frac{ms}{ls}abs(m.\mu - l.\mu)^2 + \frac{ns}{ls}abs(n.\mu - l.\mu)^2\]
-Scott-Knott then applies some statistical hypothesis test $H$ to check
-if $m,n$ are significantly different. If so, Scott-Knott then recurses on each division.
+Therefore, this research question may be answered as follows:
+\begin{lesson}
+Yes. Automated patch generation \textbf{can} indeed be modeled as a multiobjective search problem.
+\end{lesson}
+ 
+\subsection*{RQ2: If yes, how does single objective GP compare to multiobjective GP?}
+To answer this question, we study the evaluation time and test case variants. \fig{res_1} shows that in terms of runtime multiobjective GP is only slightly larger than traditional GP. But, more interestingly \fig{res_2} shows that multiobjective GP has a \textit{significantly  larger} variance than traditional GP. This is particularly interesting as it shows that multiobjective GP performs a more expansive search while looking for candidate patches.
+  
+Keeping these findings in view, this research question may be answered as follows.
+\begin{lesson}
+   Multiobjective GP is \textbf{significantly better} than simple GP in terms of patch variance. While also being \textbf{no worse} than simple GP in terms of evaluation times.
+\end{lesson}
 
+\subsection*{Can we replace genetic programming by some other genetic algorithm?}
+To answer this question, we replaced GP with NSGA-II. We found, from ~\fig{res_1} and \fig{res_2}, that in addition to exorbitantly large runtimes in several cases, it fares no better in terms of variance. More importantly, NSGA-II fails to find any patch at all! Our findings are that this is due to a rather naive approach to patch representation used by NSGA-II, discussed in detail in \ref{patch_rep}.
 
+Our findings lead to the following research answer:
+\begin{lesson}
+  Replacing GP with another genetic algorithm without a good patch representation approach is not advised.
+\end{lesson}
 
-\section{Proposed Timeline}
+\section{Discussions}
+\label{discuss}
 
-Figure \ref{time} highlights the proposed timeline for the tasks undertaken in the project. Please note again that this subject to change, please see https://github.com/ai-se/spatch/milestones for the latest milestone progress.\\
-\pagebreak
+This report made an attempt to validate the efficacy of GP (as a multiobjective search) and the nature of mutate operations in GenProg. From RQ1 and RQ2 we note that, converting single objective GP to a multiobjective GP offers a significant benefits in that it performs a more expansive search for patches. From the outcome of RQ3 we find that GP owing to their tree-based mutation structure play a very important role in the operation of patch generation. Additionally, we found that NSGA-II failed to generate any patch, and this was due to the flattened representation of patches used by NSGA-II.     
+
+\section{Future Work}
+\label{conclusions}
+In conclusion, our study introduced the use of multiple objectives in patch generation. It also show the importance of patch representation when performing a multiobjective search for patches.
+
+As for future work, efforts must be taken to update the notation of patches prior to performing search. Also, other novel search strategies that use both GP and Non-dominated sort may be explored. In addition to this, the usefulness of a promising new algorithm called SWAY\footnote{This algorithm is in current development by our research group}~\cite{chen2016sampling, nair2016accidental} may be also be investigated.
+
 \bibliographystyle{unsrt}
-\bibliography{References}
+\bibliography{references}
 \end{document}

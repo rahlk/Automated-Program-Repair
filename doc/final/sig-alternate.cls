@@ -137,7 +137,7 @@
 \DeclareOption{12pt}{\ClassError{sig-alternate}{The `12pt' option is
     not allowed}{sig-alternate now exists in 9pt and 10pt versions only}}
 
-\ExecuteOptions{9pt}
+\ExecuteOptions{10pt}
 \ProcessOptions
 
 
@@ -196,7 +196,7 @@
 \headheight 0pt                 % Height of box containing running head.
 \headsep 0pt                    % Space between running head and text.
                                 % Bottom of page:
-\footskip 30pt                  % Distance from baseline of box containing foot
+\footskip 10pt                  % Distance from baseline of box containing foot
                                 % to baseline of last line of text.
 \@ifundefined{footheight}{\newdimen\footheight}{}% this is for LaTeX2e
 \footheight 12pt                % Height of box containing running foot.
