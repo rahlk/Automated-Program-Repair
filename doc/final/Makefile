@@ -38,4 +38,4 @@ aread:
 	acroread ${filename}.pdf
 
 clean:
-	rm -f ${filename}.ps ${filename}.pdf ${filename}.log ${filename}.aux ${filename}.out ${filename}.dvi ${filename}.bbl ${filename}.blg ${filename}.thm
+	rm -f ${filename}.ps  ${filename}.log ${filename}.aux ${filename}.out ${filename}.dvi ${filename}.bbl ${filename}.blg ${filename}.thm
